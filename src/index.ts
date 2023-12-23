@@ -1,17 +1,35 @@
-import { Canister, query, text, update, Void } from 'azle';
+import {
+  Canister,
+  Record,
+  StableBTreeMap,
+  Vec,
+  Void,
+  query,
+  text,
+  update,
+} from "azle";
 
-// This is a global variable that is stored on the heap
-let message = '';
-
-export default Canister({
-    // Query calls complete quickly because they do not go through consensus
-    getMessage: query([], text, () => {
-        return message;
-    }),
-    // Update calls take a few seconds to complete
-    // This is because they persist state changes and go through consensus
-    setMessage: update([text], Void, (newMessage) => {
-        message = newMessage; // This change will be persisted
-    })
+const Document = Record({
+  id: text,
+  name: text,
 });
 
+let Documents = StableBTreeMap<text, Document>(0);
+
+export default Canister({
+  addDocument: update([text], Void, (name) => {
+    const newDocument: Document = {
+      id: `${Math.floor(100000000 + Math.random() * 900000000)}`,
+      name: name,
+    };
+    Documents.insert(newDocument.id, newDocument);
+  }),
+
+  findDocuments: query([text], Vec(Document), (keyword) => {
+    return Documents.values().filter((value) => value.name.includes(keyword));
+  }),
+
+  getDocuments: query([], Vec(Document), () => {
+    return Documents.values();
+  }),
+});
