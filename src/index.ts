@@ -25,11 +25,18 @@ export default Canister({
     Documents.insert(newDocument.id, newDocument);
   }),
 
+  getDocuments: query([], Vec(Document), () => {
+    return Documents.values();
+  }),
+
   findDocuments: query([text], Vec(Document), (keyword) => {
     return Documents.values().filter((value) => value.name.includes(keyword));
   }),
 
-  getDocuments: query([], Vec(Document), () => {
-    return Documents.values();
+  deleteDocument: update([text], Void, (id) => {
+    const findDoc = Documents.values().find((value) => value.id === id);
+    if (findDoc.id) {
+      Documents.remove(findDoc.id);
+    }
   }),
 });

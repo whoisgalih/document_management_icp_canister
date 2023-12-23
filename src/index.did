@@ -1,5 +1,7 @@
 service: () -> {
     addDocument: (text) -> ();
+    deleteDocument: (text) -> ();
     findDocuments: (text) -> (vec record {id:text; name:text}) query;
     getDocuments: () -> (vec record {id:text; name:text}) query;
+    updateDocument: (text, text) -> ();
 }
