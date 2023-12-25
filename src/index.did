@@ -1,7 +1,16 @@
-service: () -> {
-    addDocument: (text) -> ();
-    deleteDocument: (text) -> ();
-    findDocuments: (text) -> (vec record {id:text; name:text}) query;
-    getDocuments: () -> (vec record {id:text; name:text}) query;
-    updateDocument: (text, text) -> ();
+type Document = record {
+  id : text;
+  name : text;
+  createdAt : nat64;
+  description : text;
+  updatedAt : opt nat64;
+};
+type DocumentPayload = record { name : text; description : text };
+type _AzleResult = variant { Ok : Document; Err : text };
+type _AzleResult_1 = variant { Ok : vec Document; Err : text };
+service : () -> {
+  addDocument : (DocumentPayload) -> (_AzleResult);
+  deleteDocument : (text) -> (_AzleResult);
+  findDocuments : (text) -> (_AzleResult_1) query;
+  getDocuments : () -> (_AzleResult_1) query;
 }
